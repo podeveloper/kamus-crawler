@@ -14,5 +14,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->user())
+    {
+        return redirect('/admin');
+    }
+
+    return redirect()->to('/admin/login');
+});
+
+\Livewire\Livewire::setScriptRoute(function ($handle) {
+    return Route::get('/aldiwan/livewire/livewire.js', $handle);
+});
+
+\Livewire\Livewire::setUpdateRoute(function ($handle) {
+    return Route::post('/aldiwan/livewire/update', $handle);
 });
