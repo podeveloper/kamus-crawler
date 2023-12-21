@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('words', function (Blueprint $table) {
             $table->id();
             $table->string('dictionary')->nullable();
-            $table->string('arabic_word')->nullable();
+            $table->string('text')->nullable();
             $table->string('pronunciation')->nullable();
             $table->text('explanation')->nullable();
             $table->text('url')->nullable();
