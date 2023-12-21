@@ -9,5 +9,5 @@ class Word extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['dictionary', 'arabic_word', 'pronunciation', 'explanation', 'url'];
+    protected $fillable = ['dictionary', 'text', 'pronunciation', 'explanation', 'url'];
 }
