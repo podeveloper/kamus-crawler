@@ -51,7 +51,7 @@ class ScrapDictionaryCommand extends Command
 
         $parameters = $collection->reject(function ($value) {
             return is_null($value) || $value === "";
-        });
+        })->unique();
 
         foreach ($parameters as $key => $parameter) {
             // Construct the URL for each word
@@ -104,19 +104,12 @@ class ScrapDictionaryCommand extends Command
         {
             foreach ($contents as $content)
             {
-                // Replace Vowels
-                $arabicText = preg_replace('/[ًٌٍَُِّْ]/u', '', $content["arabic"]);
-
-                // Replace Alef
-                $arabicText = str_replace(['أ', 'آ', 'إ'], 'ا', $arabicText);
-
-                // Replace Ya
-                $arabicText = str_replace(['ى'], 'ي', $arabicText);
+                $arabicText = self::cleanArabicText($content["arabic"]);
+                $explanation = self::cleanArabicText($content["explanation"]);
 
                 $text = $arabicText;
                 $dictionaryName = $content["dictionary"];
                 $pronunciation = $content["pronunciation"];
-                $explanation = $content["explanation"];
 
                 $this->createWordEntry($dictionaryName, $text, $pronunciation, $explanation, $parameter, $url);
             }
@@ -139,6 +132,19 @@ class ScrapDictionaryCommand extends Command
         ]);
     }
 
+    protected static function cleanArabicText($text) {
+        // Remove diacritics
+        $text = preg_replace('/[ًٌٍَُِّْ]/u', '', $text);
+
+        // Replace Alef
+        $text = str_replace(['أ', 'آ', 'إ'], 'ا', $text);
+
+        // Replace Ya
+        $text = str_replace(['ى'], 'ي', $text);
+
+        return $text;
+    }
+
     protected function extract($text)
     {
         // Extract pronunciation and explanation from the text
@@ -148,12 +154,16 @@ class ScrapDictionaryCommand extends Command
 
         if (count($matches) >= 3) {
             $arabicText = trim($matches[1]);
+            $arabicText = (strlen($arabicText) > 30) ? 'None' : $arabicText;
+
             $pronunciation = trim($matches[2]);
+            $pronunciation = (strlen($pronunciation) > 30) ? 'None' : $pronunciation;
+
             $explanation = trim(str_replace("$arabicText", '', $text)); // Use $explanation instead of $text
             $explanation = trim(str_replace("[$pronunciation]", '', $explanation)); // Use $explanation instead of $text
 
             return [
-                'arabic' => strlen($arabicText) < 30 ? $arabicText : 'None',
+                'arabic' => $arabicText,
                 'pronunciation' => $pronunciation,
                 'explanation' => $explanation,
             ];
