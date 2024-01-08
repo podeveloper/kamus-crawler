@@ -36,6 +36,9 @@ class WordResource extends Resource
                 Forms\Components\Textarea::make('explanation')
                     ->maxLength(65535)
                     ->columnSpanFull(),
+                Forms\Components\Textarea::make('parameter')
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('url')
                     ->maxLength(65535)
                     ->columnSpanFull(),
@@ -46,6 +49,8 @@ class WordResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('parameter')
+                    ->searchable(isIndividual: true),
                 Tables\Columns\TextColumn::make('dictionary')
                     ->searchable(isIndividual: true),
                 Tables\Columns\TextColumn::make('text')
@@ -53,6 +58,7 @@ class WordResource extends Resource
                 Tables\Columns\TextColumn::make('pronunciation')
                     ->searchable(isIndividual: true),
                 Tables\Columns\TextColumn::make('explanation')
+                    ->wrap()
                     ->searchable(isIndividual: true),
             ])
             ->filters([
@@ -89,6 +95,6 @@ class WordResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['text','pronunciation','explanation'];
+        return ['text','pronunciation','explanation','parameter'];
     }
 }
