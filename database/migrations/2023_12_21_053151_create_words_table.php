@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('dictionary')->nullable();
             $table->string('text')->nullable();
             $table->string('pronunciation')->nullable();
-            $table->text('explanation')->nullable();
+            $table->longText('explanation')->nullable();
+            $table->text('parameter')->nullable();
             $table->text('url')->nullable();
             $table->timestamps();
         });
