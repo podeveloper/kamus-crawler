@@ -49,18 +49,29 @@ class ScrapDictionaryCommand extends Command
 
         $collection = collect($allContentsArray);
 
-        $parameters = $collection->reject(function ($value) {
-            return is_null($value) || $value === "";
-        })->unique();
+        $startTime = now();
 
-        foreach ($parameters as $key => $parameter) {
-            // Construct the URL for each word
+        $parameters = $collection
+            ->reject(function ($value) {
+                return is_null($value) || $value === "";
+            })
+            ->unique();
+
+        $totalIterations = $parameters->count();
+
+        foreach ($parameters as $currentIteration => $parameter) {
+
             $url = 'https://www.kamus.yek.gov.tr/Home/Getdata?id=' . rawurlencode($parameter);
+            $order = ($currentIteration + 1) . ' / ' . $totalIterations;
 
-            // Scrape the dictionary for the current word
-            $this->info("Crawling word {$key}: " . $parameter);
+            $this->info("Crawling word {$parameter}: ({$order})");
+            $this->crawlWords($url, $parameter);
 
-            $this->crawlWords($url,$parameter);
+            // Display total and remaining time every 100 iterations
+            if ($currentIteration % 100 === 0) {
+                $totalElapsedTime = now()->diffInSeconds($startTime);
+                $this->info("Total passed time: " . gmdate("H:i:s", $totalElapsedTime));
+            }
         }
 
         $this->info('Scraping completed.');
