@@ -115,12 +115,12 @@ class ScrapDictionaryCommand extends Command
         {
             foreach ($contents as $content)
             {
-                $arabicText = self::cleanArabicText($content["arabic"]);
-                $explanation = self::cleanArabicText($content["explanation"]);
+                $arabicText = self::cleanArabicText($content["arabic"] ?? '');
+                $explanation = self::cleanArabicText($content["explanation"] ?? '');
 
                 $text = $arabicText;
                 $dictionaryName = $content["dictionary"];
-                $pronunciation = $content["pronunciation"];
+                $pronunciation = $content["pronunciation"] ?? '';
 
                 $this->createWordEntry($dictionaryName, $text, $pronunciation, $explanation, $parameter, $url);
             }
